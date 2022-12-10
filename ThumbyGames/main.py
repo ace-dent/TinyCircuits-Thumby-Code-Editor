@@ -80,7 +80,7 @@ if(HWID>=1):
 display.init_display()
 display.contrast(brightnessVals[brightnessSetting])
 
-f=open('lib/TClogo.bin')
+f=open('lib/splash.bin')
 f.readinto(display.buffer)
 f.close()
 display.show()

@@ -56,8 +56,7 @@ firstLine = 0
 creditsScrollOffset=-1
     
 
-TCSplash=thumby.Sprite(72, 24, 'lib/TClogo.bin',0,0,-1)
-thumbySplash=thumby.Sprite(72, 24, 'lib/thumbyLogo.bin',0,0,-1)
+thumbySplash=thumby.Sprite(72, 40, 'lib/splash.bin',0,0,-1)
 
 
 settingsBMonly = bytearray([81,81,85,69,69,127,65,65,85,85,93,127,125,65,65,125,127,125,65,65,125,127,93,65,65,93,127,65,65,115,103,65,65,127,65,65,93,85,69,69,127,81,81,85,69,69])
@@ -67,20 +66,16 @@ gamesBMonly +=bytearray([65,93,85,69,69,127,67,65,117,65,67,127,65,65,115,103,11
 settingsHeader = thumby.Sprite(46, 7, settingsBMonly,key=-1)
 gamesHeader = thumby.Sprite(32, 7, gamesBMonly,key=-1)
 
-#thumbySplash = thumby.sprite(30, 30, 'bird.bin',0,0,-1)
 
-thumby.display.setFPS(100)
+thumby.display.setFPS(50)
 
-thumbySplash.y = -37
-while thumbySplash.y < 5:
-    thumbySplash.y += 1
-    TCSplash.y=thumbySplash.y+37
+thumbySplash.y = 0
+while thumbySplash.y > (24-thumbySplash.height):
+    thumbySplash.y -= 1
     thumby.display.fill(0)
     thumby.display.drawSprite(thumbySplash)
-    thumby.display.drawSprite(TCSplash)
     thumby.display.update()
     
-thumby.display.setFPS(50)
 
 thumbyLogoHeight=thumbySplash.y
 
@@ -310,10 +305,10 @@ while True:
     
     
     if(-72>xScrollPos>-216 and xScrollTarget!=-72):
-        thumby.display.drawText("Special", xScrollPos+144 + 72//2 - ( 7 * 6) // 2, 0 ,1)
-        thumby.display.drawText("Thanks From", xScrollPos+144 + 72//2 - ( 11 * 6) // 2, 10 ,1)
-        thumby.display.drawText("TinyCircuits", xScrollPos+144 + 72//2 - ( 12 * 6) // 2, 20 ,1)
-        thumby.display.drawText("To...", xScrollPos+144 + 72//2 - ( 5 * 6) // 2, 30 ,1)
+        thumby.display.drawText("A secret", xScrollPos+144 + 72//2 - ( 8 * 6) // 2, 0 ,1)
+        thumby.display.drawText("hidden", xScrollPos+144 + 72//2 - ( 6 * 6) // 2, 10 ,1)
+        thumby.display.drawText("message", xScrollPos+144 + 72//2 - ( 7 * 6) // 2, 20 ,1)
+        thumby.display.drawText("   ...", xScrollPos+144 + 72//2 - ( 6 * 6) // 2, 30 ,1)
         if(xScrollPos==xScrollTarget):
             thumby.display.update()
             file = open('/lib/credits.txt','r')
@@ -440,9 +435,6 @@ while True:
                         thumby.display.brightness(brightnessVals[brightnessSetting])
                         saveConfigSetting("brightness", str(brightnessSetting))
                     settings=[audioSettings[audioSetting], brightnessSettings[brightnessSetting]]
-        #print(ticks_us() - start)
-
-
 
 
 machine.reset()
