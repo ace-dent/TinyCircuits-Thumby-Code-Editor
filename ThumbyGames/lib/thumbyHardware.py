@@ -19,8 +19,7 @@
     the Thumby API. If not, see <https://www.gnu.org/licenses/>.
 '''
 
-from machine import Pin, PWM, SPI
-from machine import reset as machineReset
+from machine import mem32, Pin, PWM, SPI, reset as machineReset
 
 # Last updated 22-Dec-2022
 __version__ = '1.9'
@@ -34,24 +33,27 @@ swA = Pin(27, Pin.IN, Pin.PULL_UP) # right (A) action button
 swB = Pin(24, Pin.IN, Pin.PULL_UP) # left (B) action button
 swBuzzer = PWM(Pin(28))
 
-HWID = 0
-IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-    HWID+=1
-IDPin.init(IDPin.PULL_DOWN)
-IDPin = Pin(14, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-    HWID+=2
-IDPin.init(IDPin.PULL_DOWN)
-IDPin = Pin(13, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-    HWID+=4
-IDPin.init(IDPin.PULL_DOWN)
-IDPin = Pin(12, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-   HWID+=8
-IDPin.init(IDPin.PULL_DOWN)
-
+if(mem32[0x40058010]>0): # Watchdog timer scratch register '1'
+    HWID = mem32[0x40058010]
+else:
+    HWID = 0
+    IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=1
+    IDPin.init(IDPin.PULL_DOWN)
+    IDPin = Pin(14, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=2
+    IDPin.init(IDPin.PULL_DOWN)
+    IDPin = Pin(13, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=4
+    IDPin.init(IDPin.PULL_DOWN)
+    IDPin = Pin(12, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=8
+    IDPin.init(IDPin.PULL_DOWN)
+    mem32[0x40058010] = HWID
 
 if(HWID>=1):
     spi = SPI(0, sck=Pin(18), mosi=Pin(19)) # Assign miso to 4 or 16?
@@ -61,8 +63,6 @@ else:
     i2c = I2C(0, sda=Pin(16), scl=Pin(17), freq=1_000_000)
     spi = None
 
-
 # Wrap machine.reset() to be accessible as thumby.reset()
 def reset():
     machineReset()
-    

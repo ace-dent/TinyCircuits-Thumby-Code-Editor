@@ -1,10 +1,10 @@
-# Thumby main.py- quick initialization to display the TinyCircuits logo before menu.py is called
-# Last updated 22-Dec-2022
+# Thumby main.py- quick initialization and splashscreen before menu.py is called
+# Last updated 27-Dec-2022
 
 from machine import freq, mem32, reset
 freq(133_000_000)
 
-if(mem32[0x4005800C]==1): # Watchdog timer scratch register
+if(mem32[0x4005800C]==1): # Watchdog timer scratch register '0'
     mem32[0x4005800C]=0
     gamePath=''
     conf = open("thumby.cfg", "r").read().split(',')
@@ -30,16 +30,20 @@ if(mem32[0x4005800C]==1): # Watchdog timer scratch register
 from machine import Pin, SPI
 from ssd1306 import SSD1306_SPI
 
-HWID = 0
-IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-    HWID+=1
-IDPin.init(IDPin.PULL_DOWN)
-IDPin = Pin(14, Pin.IN, Pin.PULL_UP)
-if(IDPin.value() == 0):
-    HWID+=2
-IDPin.init(IDPin.PULL_DOWN)
-# Check HWID with GPIO pins 13–12 for future revisions
+if(mem32[0x40058010]>0): # Watchdog timer scratch register '1'
+    HWID = mem32[0x40058010]
+else:
+    HWID = 0
+    IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=1
+    IDPin.init(IDPin.PULL_DOWN)
+    IDPin = Pin(14, Pin.IN, Pin.PULL_UP)
+    if(IDPin.value() == 0):
+        HWID+=2
+    IDPin.init(IDPin.PULL_DOWN)
+    # Check HWID with GPIO pins 13–12 for future revisions
+    mem32[0x40058010] = HWID
 
 if(HWID>=1):
     spi = SPI(0, sck=Pin(18), mosi=Pin(19)) # Assign miso to 4 or 16?
@@ -51,14 +55,19 @@ else:
     display = SSD1306_I2C(72, 40, i2c, res=Pin(18))
 display.init_display()
 
-brightnessSetting=1
-try:
-    conf = open("thumby.cfg", "r").read().split(',')
+if(mem32[0x40058014]>0): # Watchdog timer scratch register '2'
+    brightnessSetting = mem32[0x40058014] - 1
+else:
+    brightnessSetting=1
+    try:
+        conf = open("thumby.cfg", "r").read().split(',')
     for k in range(len(conf)):
         if(conf[k] == "brightness"):
             brightnessSetting = int(conf[k+1])
-except OSError:
-    pass
+    except OSError:
+        pass
+    mem32[0x40058014] = brightnessSetting + 1
+
 brightnessVals=[1,28,127]
 display.contrast(brightnessVals[brightnessSetting])
 

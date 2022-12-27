@@ -1,4 +1,4 @@
-# Last updated 23-Dec-2022
+# Last updated 27-Dec-2022
 
 from machine import freq
 freq(250_000_000)
@@ -15,7 +15,7 @@ try:
         conf.append(',brightness,1')
 except OSError:
     conf = open("thumby.cfg", "w")
-    conf.write("audioenabled,1,lastgame,/Games/TinyBlocks/TinyBlocks.py,brightness,1")
+    conf.write("audioenabled,1,lastgame,menu.py,brightness,1")
     conf.close()
 
 def getConfigSetting(key):
@@ -418,7 +418,8 @@ while True:
                         brightnessSetting= (brightnessSetting+1) % 3
                         thumby.display.brightness(brightnessVals[brightnessSetting])
                         saveConfigSetting("brightness", str(brightnessSetting))
+                        mem32[0x40058014] = brightnessSetting + 1
                     settings=[audioSettings[audioSetting], brightnessSettings[brightnessSetting]]
 
 
-machine.reset()
+thumby.reset()
