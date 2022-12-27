@@ -33,10 +33,8 @@ swA = Pin(27, Pin.IN, Pin.PULL_UP) # right (A) action button
 swB = Pin(24, Pin.IN, Pin.PULL_UP) # left (B) action button
 swBuzzer = PWM(Pin(28))
 
-if(mem32[0x40058010]>0): # Watchdog timer scratch register '1'
-    HWID = mem32[0x40058010]
-else:
-    HWID = 0
+HWID = mem32[0x40058010] # Watchdog timer scratch register '1'
+if(HWID == 0):
     IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
     if(IDPin.value() == 0):
         HWID+=1
