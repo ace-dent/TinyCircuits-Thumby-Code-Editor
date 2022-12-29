@@ -1,10 +1,10 @@
 # Thumby main.py- quick initialization and splashscreen before menu.py is called
-# Last updated 27-Dec-2022
+# Last updated 29-Dec-2022
 
 from machine import freq, mem32, reset
 freq(133_000_000)
 
-if(mem32[0x4005800C]==1): # Watchdog timer scratch register '0'
+if(mem32[0x4005800C]==1): # WDT scratch register '0'
     mem32[0x4005800C]=0
     gamePath=''
     conf = open("thumby.cfg", "r").read().split(',')
@@ -30,7 +30,7 @@ if(mem32[0x4005800C]==1): # Watchdog timer scratch register '0'
 from machine import Pin, SPI
 from ssd1306 import SSD1306_SPI
 
-HWID = mem32[0x40058010] # Watchdog timer scratch register '1'
+HWID = mem32[0x40058010] # WDT scratch register '1'
 if(HWID == 0):
     IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
     if(IDPin.value() == 0):
@@ -40,7 +40,7 @@ if(HWID == 0):
     if(IDPin.value() == 0):
         HWID+=2
     IDPin.init(IDPin.PULL_DOWN)
-    # Check HWID with GPIO pins 13–12 for future revisions
+    # Check HWID with GPIO pins 13-12 for future revisions
     mem32[0x40058010] = HWID
 
 if(HWID>=1):
@@ -53,15 +53,15 @@ else:
     display = SSD1306_I2C(72, 40, i2c, res=Pin(18))
 display.init_display()
 
-if(mem32[0x40058014]>0): # Watchdog timer scratch register '2'
+if(mem32[0x40058014]>0): # WDT scratch register '2'
     brightnessSetting = mem32[0x40058014] - 1
 else:
     brightnessSetting=1
     try:
         conf = open("thumby.cfg", "r").read().split(',')
-    for k in range(len(conf)):
-        if(conf[k] == "brightness"):
-            brightnessSetting = int(conf[k+1])
+        for k in range(len(conf)):
+            if(conf[k] == "brightness"):
+                brightnessSetting = int(conf[k+1])
     except OSError:
         pass
     mem32[0x40058014] = brightnessSetting + 1

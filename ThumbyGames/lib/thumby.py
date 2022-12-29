@@ -23,7 +23,7 @@
 
 from machine import reset as machineReset, freq
 
-# Last updated 14-Dec-2022
+# Last updated 29-Dec-2022
 __version__ = '1.9'
 
 # Grab initial frequency
@@ -31,7 +31,7 @@ __f0 = freq()
 # Speed us up so imports take less time
 freq(250_000_000)
 
-from thumbyHardware import swL, swR, swU, swD, swA, swB, swBuzzer, IDPin, i2c, spi, reset
+from thumbyHardware import swL, swR, swU, swD, swA, swB, swBuzzer, HWID, i2c, spi, reset # Why import IDPin? Should be HWID?
 
 from thumbySprite import Sprite
 

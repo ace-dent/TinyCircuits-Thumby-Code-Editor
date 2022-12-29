@@ -21,7 +21,7 @@
 
 from machine import mem32, Pin, PWM, SPI, reset as machineReset
 
-# Last updated 22-Dec-2022
+# Last updated 29-Dec-2022
 __version__ = '1.9'
 
 # Pin definitions for button inputs & buzzer.
@@ -33,7 +33,7 @@ swA = Pin(27, Pin.IN, Pin.PULL_UP) # right (A) action button
 swB = Pin(24, Pin.IN, Pin.PULL_UP) # left (B) action button
 swBuzzer = PWM(Pin(28))
 
-HWID = mem32[0x40058010] # Watchdog timer scratch register '1'
+HWID = mem32[0x40058010] # WDT scratch register '1'
 if(HWID == 0):
     IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
     if(IDPin.value() == 0):
