@@ -1,5 +1,5 @@
 # Thumby main.py- quick initialization and splashscreen before menu.py is called
-# Last updated 29-Dec-2022
+# Last updated 5-Jan-2023
 
 from machine import freq, mem32, reset
 freq(133_000_000)
@@ -53,9 +53,7 @@ else:
     display = SSD1306_I2C(72, 40, i2c, res=Pin(18))
 display.init_display()
 
-if(mem32[0x40058014]>0): # WDT scratch register '2'
-    brightnessSetting = mem32[0x40058014] - 1
-else:
+if(mem32[0x40058014]==0): # WDT scratch register '2'
     brightnessSetting=1
     try:
         conf = open("thumby.cfg", "r").read().split(',')
@@ -64,10 +62,9 @@ else:
                 brightnessSetting = int(conf[k+1])
     except OSError:
         pass
-    mem32[0x40058014] = brightnessSetting + 1
-
-brightnessVals=[1,28,127]
-display.contrast(brightnessVals[brightnessSetting])
+    brightnessVals=[1,28,127]
+    mem32[0x40058014] = brightnessVals[brightnessSetting]
+display.contrast(mem32[0x40058014])
 
 f=open('lib/TClogo.bin')
 f.readinto(display.buffer)

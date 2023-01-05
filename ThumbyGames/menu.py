@@ -1,4 +1,4 @@
-# Last updated 29-Dec-2022
+# Last updated 5-Jan-2023
 
 from machine import freq
 freq(250_000_000)
@@ -416,9 +416,9 @@ while True:
                         thumby.audio.play(500,20)
                     if(settingsSelpos==1):
                         brightnessSetting= (brightnessSetting+1) % 3
-                        thumby.display.brightness(brightnessVals[brightnessSetting])
                         saveConfigSetting("brightness", str(brightnessSetting))
-                        mem32[0x40058014] = brightnessSetting + 1
+                        mem32[0x40058014] = brightnessVals[brightnessSetting]
+                        thumby.display.brightness(mem32[0x40058014])
                     settings=[audioSettings[audioSetting], brightnessSettings[brightnessSetting]]
 
 
