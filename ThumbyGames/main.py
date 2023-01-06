@@ -4,7 +4,7 @@
 from machine import freq, mem32, reset
 freq(133_000_000)
 
-if(mem32[0x4005800C]==1): # WDT scratch register '0'
+if(mem32[0x4005800C]==1): # WDT scratch register 0 (launch app)
     mem32[0x4005800C]=0
     gamePath=''
     conf = open("thumby.cfg", "r").read().split(',')
@@ -30,7 +30,7 @@ if(mem32[0x4005800C]==1): # WDT scratch register '0'
 from machine import Pin, SPI
 from ssd1306 import SSD1306_SPI
 
-HWID = mem32[0x40058010] # WDT scratch register '1'
+HWID = mem32[0x40058010] # WDT scratch register 1 (HardwareID)
 if(HWID == 0):
     IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
     if(IDPin.value() == 0):
@@ -53,7 +53,7 @@ else:
     display = SSD1306_I2C(72, 40, i2c, res=Pin(18))
 display.init_display()
 
-if(mem32[0x40058014]==0): # WDT scratch register '2'
+if(mem32[0x40058014]==0): # WDT scratch register 2 (brightness)
     brightnessSetting=1
     try:
         conf = open("thumby.cfg", "r").read().split(',')
@@ -61,15 +61,19 @@ if(mem32[0x40058014]==0): # WDT scratch register '2'
             if(conf[k] == "brightness"):
                 brightnessSetting = int(conf[k+1])
     except OSError:
-        pass
+        conf = open("thumby.cfg", "w")
+    #   conf.write("audioenabled,1,lastgame,menu.py,brightness,1")
+        conf.write("brightness,1,audioenabled,1,lastgame,menu.py")
+        conf.close()
     brightnessVals=[1,28,127]
     mem32[0x40058014] = brightnessVals[brightnessSetting]
 display.contrast(mem32[0x40058014])
 
-f=open('lib/TClogo.bin')
-f.readinto(display.buffer)
-f.close()
-display.show()
+if(mem32[0x40058018]==0): # WDT scratch register 3 (fast reset)
+    f=open('lib/TClogo.bin')
+    f.readinto(display.buffer)
+    f.close()
+    display.show()
 
 
 import menu

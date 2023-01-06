@@ -9,14 +9,6 @@ from gc import collect as gc_collect
 import thumby
 freq(48_000_000)
 
-try:
-    conf = open("thumby.cfg", "r").read().split(',')
-    if(len(conf)<6):
-        conf.append(',brightness,1')
-except OSError:
-    conf = open("thumby.cfg", "w")
-    conf.write("audioenabled,1,lastgame,menu.py,brightness,1")
-    conf.close()
 
 def getConfigSetting(key):
     cfgfile = open("thumby.cfg", "r")
@@ -57,10 +49,6 @@ firstLine = 0
 creditsScrollOffset=-1
 
 
-TCSplash=thumby.Sprite(72, 24, 'lib/TClogo.bin',0,0,-1)
-thumbySplash=thumby.Sprite(72, 24, 'lib/thumbyLogo.bin',0,0,-1)
-
-
 settingsBMonly = bytearray([81,81,85,69,69,127,65,65,85,85,93,127,125,65,65,125,127,125,65,65,125,127,93,65,65,93,127,65,65,115,103,65,65,127,65,65,93,85,69,69,127,81,81,85,69,69])
 gamesBMonly =bytearray([65,65,93,85,69,69,127,67,65,117,65,67,127,65,65,115,103,115,65,65,127,65,65,85,85,93,127,81,81,85,69,69])
 
@@ -70,15 +58,21 @@ gamesHeader = thumby.Sprite(32, 7, gamesBMonly,key=-1)
 
 thumby.display.setFPS(50)
 
-thumbySplash.y = -37
-while thumbySplash.y < 5:
-    thumbySplash.y += 2
-    TCSplash.y=thumbySplash.y+37
-    thumby.display.fill(0)
+thumbySplash=thumby.Sprite(72, 24, 'lib/thumbyLogo.bin',0,6,-1)
+if (mem32[0x40058018]): # WDT scratch register 3 (fast reset)
     thumby.display.drawSprite(thumbySplash)
-    thumby.display.drawSprite(TCSplash)
     thumby.display.update()
-
+else:
+    mem32[0x40058018] = True
+    thumbySplash.y = -37
+    TCSplash=thumby.Sprite(72, 24, 'lib/TClogo.bin',0,0,-1)
+    while thumbySplash.y < 5:
+        thumbySplash.y += 2
+        TCSplash.y=thumbySplash.y+37
+        thumby.display.fill(0)
+        thumby.display.drawSprite(thumbySplash)
+        thumby.display.drawSprite(TCSplash)
+        thumby.display.update()
 thumbyLogoHeight=thumbySplash.y
 
 

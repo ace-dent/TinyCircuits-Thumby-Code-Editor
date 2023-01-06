@@ -33,7 +33,7 @@ swA = Pin(27, Pin.IN, Pin.PULL_UP) # right (A) action button
 swB = Pin(24, Pin.IN, Pin.PULL_UP) # left (B) action button
 swBuzzer = PWM(Pin(28))
 
-HWID = mem32[0x40058010] # WDT scratch register '1'
+HWID = mem32[0x40058010] # WDT scratch register 1 (HardwareID)
 if(HWID == 0):
     IDPin = Pin(15, Pin.IN, Pin.PULL_UP)
     if(IDPin.value() == 0):
