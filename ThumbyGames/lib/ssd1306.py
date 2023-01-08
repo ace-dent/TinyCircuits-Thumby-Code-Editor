@@ -1,6 +1,6 @@
 # MicroPython SSD1306 OLED driver, I2C and SPI interfaces- modified for Thumby
 
-# Last updated 20-Dec-2022
+# Last updated 8-Jan-2023
 
 
 class SSD1306():
@@ -18,6 +18,7 @@ class SSD1306():
             0x10 if self.external_vcc else 0x14,0xAD,0x30,0xAE | 0x01
         ):
             self.write_cmd(cmd)
+        self.clear()
 
     def poweroff(self):
         self.write_cmd(0xAE | 0x00)
@@ -31,6 +32,10 @@ class SSD1306():
 
     def invert(self, invert):
         self.write_cmd(0xA6 | (invert & 1))
+
+    def clear(self):
+        self.write_window_cmd()
+        self.write_data(bytearray(360))
 
     @micropython.native
     def show(self):
