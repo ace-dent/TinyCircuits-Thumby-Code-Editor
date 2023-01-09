@@ -69,7 +69,10 @@ if(mem32[0x40058014]==0): # WDT scratch register 2 (brightness)
     mem32[0x40058014] = brightnessVals[brightnessSetting]
 display.contrast(mem32[0x40058014])
 
-if(mem32[0x40058018]==0): # WDT scratch register 3 (fast reset)
+if(mem32[0x40058018]==1): # WDT scratch register 3 (fast reset)
+    display.write_window_cmd()
+    display.write_data(bytearray(176)+bytearray([12,18,34,68,34,18,12]))
+else:
     f=open('lib/TClogo.bin')
     f.readinto(display.buffer)
     f.close()
