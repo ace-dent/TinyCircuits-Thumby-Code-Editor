@@ -23,7 +23,7 @@
 from os import stat
 import emulator
 
-# Last updated 14-Dec-2022
+# Last updated 11-Feb-2023
 __version__ = '1.9'
 
 # Sprite class for holding pixel data 
@@ -43,7 +43,7 @@ class Sprite:
             self.file = open(self.bitmapSource,'rb')
             self.file.readinto(self.bitmap)
             self.frameCount = stat(self.bitmapSource)[6] // self.bitmapByteCount
-        elif type(self.bitmapSource)==bytearray:
+        else:
             self.bitmap = memoryview(self.bitmapSource)[0:self.bitmapByteCount]
             self.frameCount = len(self.bitmapSource) // self.bitmapByteCount
         self.x = x
@@ -64,5 +64,5 @@ class Sprite:
             if type(self.bitmapSource)==str:
                 self.file.seek(offset)
                 self.file.readinto(self.bitmap)
-            elif type(self.bitmapSource)==bytearray:
+            else:
                 self.bitmap = memoryview(self.bitmapSource)[offset:offset+self.bitmapByteCount]
